@@ -28,6 +28,7 @@ def get_random_players_and_img_path() -> list[tuple[str, str]]:
         ["選手名", "画像のパス"]
     ]
     """
+    random.seed()  # シード値をリセット
     return random.sample(list(players.items()), 4)
 
 
@@ -44,8 +45,6 @@ st.title("🏆⚽️プレミアリーグ選手クイズ⚽️🏆")
 if "option_list" not in st.session_state:
     st.session_state["option_list"] = get_random_players_and_img_path()
     st.session_state["score"] = 0
-else:
-    st.write(f"{st.session_state['play_count']}回目のプレイですね！")
 
 option_list = st.session_state["option_list"]
 
