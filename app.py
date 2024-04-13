@@ -26,3 +26,13 @@ st.title("🏆⚽️プレミアリーグ選手クイズ⚽️🏆")
 
 image_path = get_random_image_paths()
 st.markdown(f'<div style="display: flex; justify-content: center;"><img src="data:image/png;base64,{get_image_base64(image_path)}" width="300"/></div>', unsafe_allow_html=True)
+
+options = ["", "ちんぽ", "ぼこた", "リュウタロス", "マクアリスター"]
+
+# セレクトボックスで選択肢を表示
+st.selectbox(
+    label="選手名はなんでしょう？？",
+    options=options,
+    index=None,
+    placeholder="選手名を選択してください"
+)
