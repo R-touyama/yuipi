@@ -1,8 +1,9 @@
 import base64
-import glob
 import random
 
 import streamlit as st
+
+from ansers import players
 
 # 画像を表示して選手名を当てるクイズ
 
@@ -16,8 +17,18 @@ import streamlit as st
 
 
 # 選手の画像をランダムに取得する
-def get_random_image_paths():
-    return random.choice(glob.glob("./imags/*"))
+def get_random_players_and_img_path() -> list[tuple[str, str]]:
+    """
+    選手名と画像のパスをランダムに4人取得する
+    ex.
+    [
+        ["選手名", "画像のパス"],
+        ["選手名", "画像のパス"],
+        ["選手名", "画像のパス"],
+        ["選手名", "画像のパス"]
+    ]
+    """
+    return random.sample(list(players.items()), 4)
 
 
 # 画像をBase64に変換する
@@ -28,16 +39,30 @@ def get_image_base64(image_path):
 
 st.title("🏆⚽️プレミアリーグ選手クイズ⚽️🏆")
 
-image_path = get_random_image_paths()
-image_base64 = get_image_base64(image_path)
+option_list = get_random_players_and_img_path()
 
 image_html = '<div style="display: flex; justify-content: center;">'
-image_html += f'<img src="data:image/png;base64,{image_base64}" width="300"/>'
+image_html += f'<img src="data:image/png;base64,{get_image_base64(option_list[0][1])}" width="300"/>'
 image_html += "</div>"
 
 st.markdown(image_html, unsafe_allow_html=True)
 
-options = ["", "ちんぽ", "ぼこた", "リュウタロス", "マクアリスター"]
+# 正解の選手名を取得
+answer_player = option_list[0][0]
+# 不正解の選手名を取得
+fail_players = [player[0] for player in option_list[1:]]
+# 正解と不正解を混ぜる
+all_players = [answer_player] + fail_players
+
 
 # セレクトボックスで選択肢を表示
-st.selectbox(label="選手名はなんでしょう？？", options=options, index=None, placeholder="選手名を選択してください")
+user_select = st.selectbox(
+    label="選手名はなんでしょう？？", options=all_players, index=None, placeholder="選手名を選択してください"
+)
+
+# 選択肢た選手が正解か不正解かを判定
+if user_select:
+    if user_select == answer_player:
+        st.write("🎉🎉🎉正解です🎉🎉🎉")
+    else:
+        st.write(f"😭😭😭不正解です😭😭😭 正解は{answer_player}でした")
