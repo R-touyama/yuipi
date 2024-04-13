@@ -54,6 +54,11 @@ image_html += "</div>"
 
 st.markdown(image_html, unsafe_allow_html=True)
 
+# st.write(f"{st.session_state['score']} 問連続正解中🎉🎉🎉")
+st.markdown(
+    f"<h3 style='text-align: center;'>{st.session_state['score']} 問連続正解中🎉🎉🎉</h1>", unsafe_allow_html=True
+)
+
 # 正解の選手名を取得
 answer_player = option_list[0][0]
 # 不正解の選手名を取得
@@ -75,9 +80,9 @@ if user_select:
         st.session_state["score"] += 1
     else:
         st.write(f"😭😭😭不正解です😭😭😭 正解は{answer_player}でした")
+        st.write(f"連続正解数は{st.session_state['score']}でした。\n 記録がリセットされます。")
+        st.session_state["score"] = 0
         st.session_state["option_list"] = get_random_players_and_img_path()
-
-st.write(f"スコア: {st.session_state['score']}")
 
 # ページ再実行
 st.button("次の問題へ進む")
