@@ -37,9 +37,17 @@ def get_image_base64(image_path):
         return base64.b64encode(img_file.read()).decode("utf-8")
 
 
+# def main():
 st.title("🏆⚽️プレミアリーグ選手クイズ⚽️🏆")
 
-option_list = get_random_players_and_img_path()
+# Streamlitのセッション状態を取得または初期化
+if "option_list" not in st.session_state:
+    st.session_state["option_list"] = get_random_players_and_img_path()
+    st.session_state["score"] = 0
+else:
+    st.write(f"{st.session_state['play_count']}回目のプレイですね！")
+
+option_list = st.session_state["option_list"]
 
 image_html = '<div style="display: flex; justify-content: center;">'
 image_html += f'<img src="data:image/png;base64,{get_image_base64(option_list[0][1])}" width="300"/>'
@@ -64,5 +72,13 @@ user_select = st.selectbox(
 if user_select:
     if user_select == answer_player:
         st.write("🎉🎉🎉正解です🎉🎉🎉")
+        st.session_state["option_list"] = get_random_players_and_img_path()
+        st.session_state["score"] += 1
     else:
         st.write(f"😭😭😭不正解です😭😭😭 正解は{answer_player}でした")
+        st.session_state["option_list"] = get_random_players_and_img_path()
+
+st.write(f"スコア: {st.session_state['score']}")
+
+# ページ再実行
+st.button("次の問題へ進む")
