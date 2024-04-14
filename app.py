@@ -48,8 +48,20 @@ if "option_list" not in st.session_state:
 
 option_list = st.session_state["option_list"]
 
+# 正解の選手名
+answer_player = {
+    "name": option_list[0][0],
+    "img_path": option_list[0][1],
+}
+
+# 不正解の選手名
+fail_players = {
+    "name": [player[0] for player in option_list[1:]],
+    "img_path": [player[1] for player in option_list[1:]],
+}
+
 image_html = '<div style="display: flex; justify-content: center;">'
-image_html += f'<img src="data:image/png;base64,{get_image_base64(option_list[0][1])}" width="300"/>'
+image_html += f'<img src="data:image/png;base64,{get_image_base64(answer_player["img_path"])}" width="300"/>'
 image_html += "</div>"
 
 st.markdown(image_html, unsafe_allow_html=True)
@@ -59,27 +71,22 @@ st.markdown(
     f"<h3 style='text-align: center;'>{st.session_state['score']} 問連続正解中🎉🎉🎉</h1>", unsafe_allow_html=True
 )
 
-# 正解の選手名を取得
-answer_player = option_list[0][0]
-# 不正解の選手名を取得
-fail_players = [player[0] for player in option_list[1:]]
-# 正解と不正解を混ぜる
-all_players = [answer_player] + fail_players
 
+option = [answer_player["name"]] + fail_players["name"]
 
 # セレクトボックスで選択肢を表示
 user_select = st.selectbox(
-    label="選手名はなんでしょう？？", options=all_players, index=None, placeholder="選手名を選択してください"
+    label="選手名はなんでしょう？？", options=option, index=None, placeholder="選手名を選択してください"
 )
 
 # 選択肢た選手が正解か不正解かを判定
 if user_select:
-    if user_select == answer_player:
+    if user_select == answer_player["name"]:
         st.write("🎉🎉🎉正解です🎉🎉🎉")
         st.session_state["option_list"] = get_random_players_and_img_path()
         st.session_state["score"] += 1
     else:
-        st.write(f"😭😭😭不正解です😭😭😭 正解は{answer_player}でした")
+        st.write(f"😭😭😭不正解です😭😭😭 正解は{answer_player['name']}でした")
         st.write(f"連続正解数は{st.session_state['score']}でした。\n 記録がリセットされます。")
         st.session_state["score"] = 0
         st.session_state["option_list"] = get_random_players_and_img_path()
