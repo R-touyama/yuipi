@@ -17,7 +17,7 @@ from ansers import players
 
 
 # 選手の画像をランダムに取得する
-def get_random_players_and_img_path() -> list[tuple[str, str]]:
+def get_random_players_and_img_path():
     """
     選手名と画像のパスをランダムに4人取得する
     ex.
