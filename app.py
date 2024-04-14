@@ -48,7 +48,13 @@ def get_random_selectbox_value_and_option_list() -> tuple:
     return players_dict, random_selectbox_value
 
 
-st.title("🏆⚽️プレミアリーグ選手クイズ⚽️🏆")
+st.markdown(
+    """
+    ### 23-24シーズン
+    # 🏆⚽️プレミアリーグ選手クイズ⚽️🏆
+    """,
+    unsafe_allow_html=True,
+)
 
 # 初回だけここに入る(初期化処理)
 if (
