@@ -48,20 +48,23 @@ if "option_list" not in st.session_state:
 
 option_list = st.session_state["option_list"]
 
-# 正解の選手名
-answer_player: dict[str, str] = {
-    "name": option_list[0][0],
-    "img_path": option_list[0][1],
-}
-
-# 不正解の選手名
-fail_players: dict[list[str], list[str]] = {
-    "name": [player[0] for player in option_list[1:]],
-    "img_path": [player[1] for player in option_list[1:]],
+# 選手名の構造化
+players_dict = {
+    "answer_player": {
+        "name": option_list[0][0],
+        "img_path": option_list[0][1],
+    },
+    "fail_players": [
+        {"name": option_list[1][0], "img_path": option_list[1][1]},
+        {"name": option_list[2][0], "img_path": option_list[2][1]},
+        {"name": option_list[3][0], "img_path": option_list[3][1]},
+    ],
 }
 
 image_html = '<div style="display: flex; justify-content: center;">'
-image_html += f'<img src="data:image/png;base64,{get_image_base64(answer_player["img_path"])}" width="300"/>'
+image_html += (
+    f'<img src="data:image/png;base64,{get_image_base64(players_dict["answer_player"]["img_path"])}" width="300"/>'
+)
 image_html += "</div>"
 
 st.markdown(image_html, unsafe_allow_html=True)
@@ -72,21 +75,24 @@ st.markdown(
 )
 
 
-option = [answer_player["name"]] + fail_players["name"]
+option = [players_dict["answer_player"]["name"]] + [player["name"] for player in players_dict["fail_players"]]
 
-# セレクトボックスで選択肢を表示
+# セレクトボックスで選択肢を表示。これを選択するとプログラムが上から再実行され、
 user_select = st.selectbox(
-    label="選手名はなんでしょう？？", options=option, index=None, placeholder="選手名を選択してください"
+    label="選手名はなんでしょう？？",
+    options=option,
+    index=None,
+    placeholder="選手名を選択してください",
 )
 
 # 選択肢た選手が正解か不正解かを判定
 if user_select:
-    if user_select == answer_player["name"]:
+    if user_select == players_dict["answer_player"]["name"]:
         st.write("🎉🎉🎉正解です🎉🎉🎉")
         st.session_state["option_list"] = get_random_players_and_img_path()
         st.session_state["score"] += 1
     else:
-        st.write(f"😭😭😭不正解です😭😭😭 正解は{answer_player['name']}でした")
+        st.write(f"😭😭😭不正解です😭😭😭 正解は{players_dict['answer_player']['name']}でした")
         st.write(f"連続正解数は{st.session_state['score']}でした。\n 記録がリセットされます。")
         st.session_state["score"] = 0
         st.session_state["option_list"] = get_random_players_and_img_path()
