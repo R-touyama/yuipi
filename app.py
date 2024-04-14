@@ -91,14 +91,20 @@ if user_select:
         st.session_state["option_list"] = get_random_players_and_img_path()
         st.session_state["score"] += 1
         # 正解したら選択肢をリセット
-        st.session_state["random_selectbox_value"] = None
+        selectbox_list = [st.session_state["option_list"]["answer_player"]["name"]] + [
+            player["name"] for player in st.session_state["option_list"]["fail_players"]
+        ]
+        st.session_state["random_selectbox_value"] = random.sample(selectbox_list, 4)
     else:
         st.write(f"😭😭😭不正解です😭😭😭 正解は{st.session_state['option_list']['answer_player']['name']}でした")
         st.write(f"連続正解数は{st.session_state['score']}でした。\n 記録がリセットされます。")
         st.session_state["score"] = 0
         st.session_state["option_list"] = get_random_players_and_img_path()
         # 不正解したら選択肢をリセット
-        st.session_state["random_selectbox_value"] = None
+        selectbox_list = [st.session_state["option_list"]["answer_player"]["name"]] + [
+            player["name"] for player in st.session_state["option_list"]["fail_players"]
+        ]
+        st.session_state["random_selectbox_value"] = random.sample(selectbox_list, 4)
 
 # ページ再実行
 st.button("次の問題へ進む")
