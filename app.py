@@ -5,16 +5,6 @@ import streamlit as st
 
 from ansers import players
 
-# 画像を表示して選手名を当てるクイズ
-
-# 画像を表示する
-# 画像のURLはランダムに選ぶ
-# 画像のURLに対応する選手名を選択肢として表示する
-# 選手名の選択肢は4つ表示して、選手名を選択する
-# 選手名を選択したら正解か不正解かを表示する
-# 不正解だったら正解の選手名を表示する
-# 正解したら次のクイズに進む
-
 
 # 選手の画像と選手名をペアに取得し、構造化して返す引数は取得する選手の数
 def get_random_players_and_img_path(num=4) -> dict:
@@ -43,31 +33,40 @@ def get_image_base64(image_path):
         return base64.b64encode(img_file.read()).decode("utf-8")
 
 
-# def main():
+def get_random_selectbox_value_and_option_list() -> tuple:
+    """
+    問題用に構造化された選手の辞書と、それをセレクトボックスの選択肢を用にランダムに並び替えたリストも返す
+    """
+    # 選択肢に出す選手を取得
+    players_dict = get_random_players_and_img_path(4)
+    # 選択肢をランダムにする
+    selectbox_list = [players_dict["answer_player"]["name"]] + [
+        player["name"] for player in players_dict["fail_players"]
+    ]
+    random_selectbox_value = random.sample(selectbox_list, 4)
+
+    return players_dict, random_selectbox_value
+
+
 st.title("🏆⚽️プレミアリーグ選手クイズ⚽️🏆")
 
-# 初回だけここに入る初期化処理
+# 初回だけここに入る(初期化処理)
 if (
-    "option_list" not in st.session_state
+    "players_dict" not in st.session_state
     and "score" not in st.session_state
     and "random_selectbox_value" not in st.session_state
 ):
-    # 選択肢に出す選手を取得
-    st.session_state["option_list"] = get_random_players_and_img_path(4)
     # スコアを初期化
     st.session_state["score"] = 0
-    # 選択肢をランダムにする
-    selectbox_list = [st.session_state["option_list"]["answer_player"]["name"]] + [
-        player["name"] for player in st.session_state["option_list"]["fail_players"]
-    ]
-    st.session_state["random_selectbox_value"] = random.sample(selectbox_list, 4)
-
-# option_list = st.session_state["option_list"]
+    st.session_state["players_dict"], st.session_state["random_selectbox_value"] = (
+        get_random_selectbox_value_and_option_list()
+    )
 
 
+# 正解となる選手の画像を表示
 image_html = '<div style="display: flex; justify-content: center;">'
 image_html += '<img src="data:image/png;base64,'
-image_html += f'{get_image_base64(st.session_state["option_list"]["answer_player"]["img_path"])}" width="300"/>'
+image_html += f'{get_image_base64(st.session_state["players_dict"]["answer_player"]["img_path"])}" width="300"/>'
 image_html += "</div>"
 
 st.markdown(image_html, unsafe_allow_html=True)
@@ -86,25 +85,23 @@ user_select = st.selectbox(
 
 # 選択肢た選手が正解か不正解かを判定
 if user_select:
-    if user_select == st.session_state["option_list"]["answer_player"]["name"]:
+    if user_select == st.session_state["players_dict"]["answer_player"]["name"]:
         st.write("🎉🎉🎉正解です🎉🎉🎉")
-        st.session_state["option_list"] = get_random_players_and_img_path()
+        # スコアを加算
         st.session_state["score"] += 1
-        # 正解したら選択肢をリセット
-        selectbox_list = [st.session_state["option_list"]["answer_player"]["name"]] + [
-            player["name"] for player in st.session_state["option_list"]["fail_players"]
-        ]
-        st.session_state["random_selectbox_value"] = random.sample(selectbox_list, 4)
+        # 正解の場合は次の問題の選手を取得
+        st.session_state["players_dict"], st.session_state["random_selectbox_value"] = (
+            get_random_selectbox_value_and_option_list()
+        )
     else:
-        st.write(f"😭😭😭不正解です😭😭😭 正解は{st.session_state['option_list']['answer_player']['name']}でした")
+        st.write(f"😭😭😭不正解です😭😭😭 正解は{st.session_state['players_dict']['answer_player']['name']}でした")
         st.write(f"連続正解数は{st.session_state['score']}でした。\n 記録がリセットされます。")
+        # 不正解の場合はスコアをリセット
         st.session_state["score"] = 0
-        st.session_state["option_list"] = get_random_players_and_img_path()
-        # 不正解したら選択肢をリセット
-        selectbox_list = [st.session_state["option_list"]["answer_player"]["name"]] + [
-            player["name"] for player in st.session_state["option_list"]["fail_players"]
-        ]
-        st.session_state["random_selectbox_value"] = random.sample(selectbox_list, 4)
+        # 正解の場合は次の問題の選手を取得
+        st.session_state["players_dict"], st.session_state["random_selectbox_value"] = (
+            get_random_selectbox_value_and_option_list()
+        )
 
 # ページ再実行
 st.button("次の問題へ進む")
