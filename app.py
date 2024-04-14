@@ -74,10 +74,14 @@ st.markdown(
     f"<h3 style='text-align: center;'>{st.session_state['score']} 問連続正解中🎉🎉🎉</h1>", unsafe_allow_html=True
 )
 
-
+# 仕様の説明：streamlitの仕様で、selectboxを選択するとプログラムが再実行される。
+# バグ：選択肢の一番最初の要素が必ず正解になってしまう。
+# 解決したいこと：
+# 選択肢をこの段階でランダムにすると、ユーザーが選択肢を選択するたびに選択肢が変わり、
+# ユーザーの選択待ちになるため、ユーザーが選択しても選択肢が変わらないようにしたい。
 option = [players_dict["answer_player"]["name"]] + [player["name"] for player in players_dict["fail_players"]]
 
-# セレクトボックスで選択肢を表示。これを選択するとプログラムが上から再実行され、
+# セレクトボックスで選択肢を表示
 user_select = st.selectbox(
     label="選手名はなんでしょう？？",
     options=option,
