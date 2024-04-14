@@ -66,7 +66,7 @@ if (
 # 正解となる選手の画像を表示
 image_html = '<div style="display: flex; justify-content: center;">'
 image_html += '<img src="data:image/png;base64,'
-image_html += f'{get_image_base64(st.session_state["players_dict"]["answer_player"]["img_path"])}" width="300"/>'
+image_html += f'{get_image_base64(st.session_state["players_dict"]["answer_player"]["img_path"])}" width="150"/>'
 image_html += "</div>"
 
 st.markdown(image_html, unsafe_allow_html=True)
