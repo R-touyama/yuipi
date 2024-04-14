@@ -49,13 +49,13 @@ if "option_list" not in st.session_state:
 option_list = st.session_state["option_list"]
 
 # 正解の選手名
-answer_player = {
+answer_player: dict[str, str] = {
     "name": option_list[0][0],
     "img_path": option_list[0][1],
 }
 
 # 不正解の選手名
-fail_players = {
+fail_players: dict[list[str], list[str]] = {
     "name": [player[0] for player in option_list[1:]],
     "img_path": [player[1] for player in option_list[1:]],
 }
